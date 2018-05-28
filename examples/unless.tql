@@ -1,0 +1,20 @@
+form taxOfficeExample { 
+  "Did you buy a house in 2010?"
+    hasBoughtHouse: boolean
+    
+  "Did you enter a loan?"
+    hasMaintLoan: boolean
+    
+  "Did you not sell a house in 2010?"
+    hasNotSoldHouse: boolean
+    
+  unless (hasNotSoldHouse) {
+    "What was the selling price?"
+      sellingPrice: money
+    "Private debts for the sold house:"
+      privateDebt: money
+    "Value residue:"
+      valueResidue: money = sellingPrice - privateDebt
+  }
+
+}

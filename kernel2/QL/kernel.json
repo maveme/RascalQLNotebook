@@ -1,0 +1,16 @@
+{
+	"argv": [
+		"java",
+		"-jar",
+ 		
+		"/Users/mveranom/Documents/bacata/bacata-rascal/target/bacata-dsl.jar",
+		"{connection_file}",
+		"home:///Downloads/rascal-ql-tutorial-prototype-master/src",
+		"QLREPL",
+		"qlREPL",
+		"QL"
+ 		,"home:///Documents/RascalProjects/salix/src"
+	],
+	"display_name": "QL",
+	"language": "QL"
+}
