@@ -63,27 +63,11 @@ CommandResult handl(str line){
 		errors = [error("Parse error at <lo>")];
 		return textual(result, messages = errors);
 	}
-	
-	//ast = load(form);
 	ast = implodeQL(pt);
-    //msgs = check(ast) + cyclicErrors(controlDeps(ast) + dataDeps(ast));
     msgs = check(ast) + cyclicErrors(controlDeps(ast));
     if (msgs == {}) {
-    	//js = pt@\loc.top[extension="js"];
-    	//js = |cwd:///tmp.js|;
-        //writeFile(|cwd:///tmp.js|, compile(desugar(ast)));
-        // html = pt@\loc.top[extension="html"];
-        //writeFile(|tmp:///tmp.html|, form2html(ast.name, |tmp:///tmp.js|));
-        
         rst = "\<script\><compile(desugar(ast))>\</script\>";
         rst += "\<div id=\"QL-content\"\>\</div\>";
-        
-        //vis
-        //visualize(resolve(controlDeps(ast) + dataDeps(ast)));
-       // renderSave(graph2figure(resolve(controlDeps(ast) + dataDeps(ast))), |cwd:///hola.jpg|);
-        //rst += <
-        
-        //<resolve(controlDeps(ast) + dataDeps(ast))>
        return textual("<rst>", messages = errors);
      }
      else{
@@ -100,10 +84,8 @@ Completion complet(str prefix, int offset) {
 void pp(){
 	div(id("header"), () {
 	    h2(class("tmpo"),"Celsius to fahrenheit converter");
-	    
 	    //Not working
 	    //button(onClick(inc()), "+");
-
   	});
 }
 
@@ -161,7 +143,6 @@ set[Node] getNodesH(rel[Node from, Node to] fa){
 }
 
 void view(Model ast) {
-//ast = implodeQL(parse(#start[Form], readFile(|project://RascalQLTutorial/examples/tax.tql|)));
   div(() {
     h4("Visualization");    
     dagre("mygraph", rankdir("LR"), title("M3 modules"), width(960), height(600), (N n, E e) {
