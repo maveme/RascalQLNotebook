@@ -18,13 +18,40 @@ import exercises::Part2;
 import AST;
 import vis::Figure;
 //import vis::Render;
+import salix::App;
 import salix::HTML;
 import salix::Core;
 import salix::Node;
 
+import salix::lib::Dagre;
+
 public REPL qlREPL(){
 	return repl( handl, complet);
 } 
+
+public REPL tmpREPL(){ 
+       return repl(
+	         	hand,
+	         	complet
+	         	visualization = makeSalixMultiplexer(|http://localhost:3434|, |tmp:///|)
+         );
+   }
+Form astt = form("",[]);
+
+CommandResult hand(str line){
+	errors=[];
+	try{ 
+		pt = parse(#start[Form], line);
+		astt = implodeQL(pt);
+		return salix(makeApp(init, view, update));
+	}
+	catch ParseError(lo):
+	{
+		errors = [error("Parse error at <lo>")];
+		return textual(result, messages = errors);
+	}
+	
+}
 
 CommandResult handl(str line){
 	errors=[];
@@ -82,8 +109,13 @@ void pp(){
 
 salix::Node::Node inp() = render(pp);
 
-str toHTML(salix::Node::Node ss){
-	switch(ss){
+str mmm(void(&T) viewX) {
+	salix::Node::Node tt = render(viewX);
+	return toHTML(tt);
+}
+
+str toHTML(salix::Node::Node root){
+	switch(root){
 		case element(str tagName, list[salix::Node::Node] kids, map[str, str] attrs, map[str, str] props, map[str, salix::Node::Hnd] events):
 			return "\<<tagName> <parseAttrs(attrs)>\><parseNodesList(kids)>\</<tagName>\>";		
 		case txt(str contents):
@@ -96,6 +128,7 @@ str toHTML(salix::Node::Node ss){
 str parseAttrs(map[str, str] attrs){
 	return (""|"<key> = \"<attrs[key]> \""| key <- attrs);
 }
+
 str parseNodesList(list[salix::Node::Node] lstnodes){
 	if(!isEmpty(lstnodes))
 		return (""|toHTML(x)| salix::Node::Node x <- lstnodes);
@@ -105,24 +138,44 @@ str parseNodesList(list[salix::Node::Node] lstnodes){
 
 
 //------------------
-//alias Model = rel[tuple[loc, str], tuple[loc, str]];
-// 
-// 
-//void view(Model m) {
-//  div(() {
-//    h4("M3 Dependencies");    
-//    dagre("mygraph", rankdir("LR"), title("M3 modules"), width(960), height(600), (N n, E e) {
-//         nos = m.methodInvocation.to + m.methodInvocation.from; 
-//    for(loc x <- nos){
-//        n("<x.path>", shape("rect"), () {
-//            div(id("nod-label"),(){
-//                p("<x.path>");
-//            });
-//        });
-//        }
-//        for (<loc x, loc y> <- m.methodInvocation) {
-//             e("<x.path>", "<y.path>", lineInterpolate("cardinal"));
-//         }
-//    }); 
-//  });
-//}
+
+salix::Node::Node inp2() = render(view);
+
+Model init() =astt;
+
+data Msg = ope();
+
+alias Model = Form;
+
+Model update(Msg msg, Model m) {
+  return m;
+}
+ 
+ Form tmp(){
+ 	pt = parse(#start[Form], readFile(|project://RascalQLTutorial/examples/tax.tql|));
+ 	return implodeQL(pt);
+ }
+
+set[Node] getNodesH(rel[Node from, Node to] fa){
+	return {from|<Node from, Node to> <-fa}+ {to|<Node from, Node to> <-fa};
+}
+
+void view(Model ast) {
+//ast = implodeQL(parse(#start[Form], readFile(|project://RascalQLTutorial/examples/tax.tql|)));
+  div(() {
+    h4("Visualization");    
+    dagre("mygraph", rankdir("LR"), title("M3 modules"), width(960), height(600), (N n, E e) {
+    nos = resolve(controlDeps(ast) + dataDeps(ast)); 
+    for(Node x <- getNodesH(nos)){
+        n("<x.label>", shape("rect"), () {
+            div(id("nod-label"),(){
+                p("<x.label>");
+            });
+        });
+        }
+        for (<Node from, Node to> <- nos) {
+             e("<from.label>", "<to.label>", lineInterpolate("cardinal"));
+         }
+    }); 
+  });
+}
