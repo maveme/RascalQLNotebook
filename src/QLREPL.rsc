@@ -47,18 +47,17 @@ CommandResult handl(str line){
         //writeFile(|cwd:///tmp.js|, compile(desugar(ast)));
         // html = pt@\loc.top[extension="html"];
         //writeFile(|tmp:///tmp.html|, form2html(ast.name, |tmp:///tmp.js|));
-        //rst = "\<script type=\"text/javascript\"\>QLrt = {};\</script\>";
-        rst = "\<script type=\"text/javascript\" src=\"http://www.decorplanit.com/plugin/autoNumeric-1.9.17.js\"\>\</script\>"; 
-        rst += "\<script\><compile(desugar(ast))>\</script\>";
-        rst += " \<div id=\"QL-content\"\>\</div\>";
+        
+        rst = "\<script\><compile(desugar(ast))>\</script\>";
+        rst += "\<div id=\"QL-content\"\>\</div\>";
         
         //vis
         //visualize(resolve(controlDeps(ast) + dataDeps(ast)));
        // renderSave(graph2figure(resolve(controlDeps(ast) + dataDeps(ast))), |cwd:///hola.jpg|);
         //rst += <
         
-        
-       return textual("<resolve(controlDeps(ast) + dataDeps(ast))>", messages = errors);
+        //<resolve(controlDeps(ast) + dataDeps(ast))>
+       return textual("<rst>", messages = errors);
      }
      else{
      	errors = [error("Error: <msgs>")];
@@ -81,15 +80,7 @@ void pp(){
   	});
 }
 
-data Msg
-  = inc();
-
 salix::Node::Node inp() = render(pp);
-
-//void xx(void() ab){
-//	q= render(ab);
-//}
-
 
 str toHTML(salix::Node::Node ss){
 	switch(ss){
@@ -114,24 +105,24 @@ str parseNodesList(list[salix::Node::Node] lstnodes){
 
 
 //------------------
-alias Model = rel[tuple[loc, str], tuple[loc, str]];
- 
- 
-void view(Model m) {
-  div(() {
-    h4("M3 Dependencies");    
-    dagre("mygraph", rankdir("LR"), title("M3 modules"), width(960), height(600), (N n, E e) {
-         nos = m.methodInvocation.to + m.methodInvocation.from; 
-    for(loc x <- nos){
-        n("<x.path>", shape("rect"), () {
-            div(id("nod-label"),(){
-                p("<x.path>");
-            });
-        });
-        }
-        for (<loc x, loc y> <- m.methodInvocation) {
-             e("<x.path>", "<y.path>", lineInterpolate("cardinal"));
-         }
-    }); 
-  });
-}
+//alias Model = rel[tuple[loc, str], tuple[loc, str]];
+// 
+// 
+//void view(Model m) {
+//  div(() {
+//    h4("M3 Dependencies");    
+//    dagre("mygraph", rankdir("LR"), title("M3 modules"), width(960), height(600), (N n, E e) {
+//         nos = m.methodInvocation.to + m.methodInvocation.from; 
+//    for(loc x <- nos){
+//        n("<x.path>", shape("rect"), () {
+//            div(id("nod-label"),(){
+//                p("<x.path>");
+//            });
+//        });
+//        }
+//        for (<loc x, loc y> <- m.methodInvocation) {
+//             e("<x.path>", "<y.path>", lineInterpolate("cardinal"));
+//         }
+//    }); 
+//  });
+//}
