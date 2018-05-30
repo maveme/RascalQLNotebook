@@ -16,13 +16,11 @@ import bacata::util::Proposer;
 import exercises::Part2;
 import AST;
 import vis::Figure;
-//import vis::Render;
 import salix::App;
 import salix::HTML;
 import salix::Core;
 import salix::Node;
-import bacata::visualization::Visualization;
-
+import bacata::util::Util;
 import salix::lib::Dagre;
 
 public REPL qlREPL(){
@@ -36,6 +34,7 @@ public REPL tmpREPL(){
 	         	visualization = makeSalixMultiplexer(|http://localhost:3434|, |tmp:///|)
          );
    }
+   
 Form astt = form("",[]);
 
 CommandResult hand(str line){
@@ -50,7 +49,6 @@ CommandResult hand(str line){
 		errors = [error("Parse error at <lo>")];
 		return textual(result, messages = errors);
 	}
-	
 }
 
 CommandResult handl(str line){
@@ -68,11 +66,10 @@ CommandResult handl(str line){
     if (msgs == {}) {
         rst = "\<script\><compile(desugar(ast))>\</script\>";
         rst += toHTML(viewQlForm);
-        //rst += "\<div id=\"QL-content\"\>\</div\>";
        return textual("<rst>", messages = errors);
      }
      else{
-     	errors = [error("Error: <msgs>")];
+     	errors = translateErrorMessages(msgs);
 		return textual(result, messages = errors);
      }
 }
@@ -82,22 +79,11 @@ Completion complet(str prefix, int offset) {
    	return < 0, ["<prop.newText>" | prop <- proposerFunction(prefix, offset)] >;
 }
 
-void pp(){
-	div(id("header"),class("claze"), () {
-	    h2(class("tmpo"),"Celsius to fahrenheit converter");
-	    p("jp;a");
-	    h2(class("tmpo"),"Celsius to fahrenheit converter");
-	    text("holsfsd");
-  	});
-}
-
 void viewQlForm(){
 	div(id("QL-content"));
 }
 
 //------------------
-
-salix::Node::Node inp2() = render(view);
 
 Model init() =astt;
 
