@@ -21,6 +21,8 @@ import util::Prompt;
 import Message;
 import IO;
 
+import NotebookQL;
+
 private str TQL ="Tutorial QL";
 
 anno rel[loc, loc] Tree@hyperlinks;
