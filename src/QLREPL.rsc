@@ -9,6 +9,7 @@ import Compile;
 import Normalize;
 import Format;
 import ParseTree;
+import NotebookQL;
 import QL;
 import Load;
 import bacata::salix::Bridge;
@@ -24,58 +25,118 @@ import bacata::util::Util;
 import salix::lib::Dagre;
 
 public REPL qlREPL(){
-	return repl( handl, complet);
+	return repl( handl, complet, visualization = makeSalixMultiplexer(|http://localhost:3434|, |tmp:///|) );
 } 
 
-public REPL tmpREPL(){ 
-       return repl(
-	         	hand,
-	         	complet
-	         	visualization = makeSalixMultiplexer(|http://localhost:3434|, |tmp:///|)
-         );
-   }
+map[str, AST::Form] history = ();
+
+//public REPL tmpREPL(){ 
+//       return repl(
+//	         	hand,
+//	         	complet
+//	         	visualization = makeSalixMultiplexer(|http://localhost:3434|, |tmp:///|)
+//         );
+//   }
    
 Form astt = form("",[]);
-
-CommandResult hand(str line){
-	errors=[];
-	try{ 
-		pt = parse(#start[Form], line);
-		astt = implodeQL(pt);
-		return salix(makeApp(init, view, update));
-	}
-	catch ParseError(lo):
-	{
-		errors = [error("Parse error at <lo>")];
-		return textual(result, messages = errors);
-	}
-}
 
 CommandResult handl(str line){
 	errors=[];
 	result = "";
-	try 
-		pt = parse(#start[Form], line);
+	try {
+		pt = parse(#start[CommandForm], line);
+		switch(pt.top){
+			case (CommandForm)`form <Id idss> = <Form form>`: {
+				imploForm = implodeForm(form);
+			    msgs = check(imploForm) + cyclicErrors(controlDeps(imploForm));
+			    if (msgs == {}) {
+			    	history += ("<idss>" : imploForm);
+			        return textual("ok", messages = errors);
+			     }
+			     else{
+			     	errors = translateErrorMessages(msgs);
+					return textual(result, messages = errors);
+			     }
+			}
+			case (CommandForm)`visualize(<Id idd>)`: {
+				//astt = implodeQL(pt);
+				astt = history["<idd>"];
+				return salix(makeApp(init, view, update));
+			}
+			case (CommandForm)`html(<Id idd>)`: {
+				//ast = implodeQL(pt);
+				try{
+					thisForm = history["<idd>"];
+					rst = "\<script\><compile(desugar(thisForm))>\</script\>";
+			        rst += toHTML(viewQlForm);
+			       return textual("<rst>", messages = errors);
+				}
+				catch: {
+					errors = translateErrorMessages(msgs);
+					return textual(result, messages = errors);
+				}
+				//imploForm = implodeForm(thisForm);
+			 //   msgs = check(imploForm) + cyclicErrors(controlDeps(imploForm));
+			    //if (msgs == {}) {
+			       // rst = "\<script\><compile(desugar(thisForm))>\</script\>";
+			       // rst += toHTML(viewQlForm);
+			       //return textual("<rst>", messages = errors);
+			     //}
+			     //else{
+			     	//errors = translateErrorMessages(msgs);
+					//return textual(result, messages = errors);
+			     //}
+			}
+		}
+	}
 	catch ParseError(lo):
 	{
 		errors = [error("Parse error at <lo>")];
 		return textual(result, messages = errors);
 	}
-	ast = implodeQL(pt);
-    msgs = check(ast) + cyclicErrors(controlDeps(ast));
-    if (msgs == {}) {
-        rst = "\<script\><compile(desugar(ast))>\</script\>";
-        rst += toHTML(viewQlForm);
-       return textual("<rst>", messages = errors);
-     }
-     else{
-     	errors = translateErrorMessages(msgs);
-		return textual(result, messages = errors);
-     }
+
+
 }
 
+//CommandResult hand(str line){
+//	errors=[];
+//	try{ 
+//		pt = parse(#start[Form], line);
+//		astt = implodeQL(pt);
+//		return salix(makeApp(init, view, update));
+//	}
+//	catch ParseError(lo):
+//	{
+//		errors = [error("Parse error at <lo>")];
+//		return textual(result, messages = errors);
+//	}
+//}
+//
+//CommandResult handl(str line){
+//	errors=[];
+//	result = "";
+//	try 
+//		pt = parse(#start[Form], line);
+//	catch ParseError(lo):
+//	{
+//		errors = [error("Parse error at <lo>")];
+//		return textual(result, messages = errors);
+//	}
+//	ast = implodeQL(pt);
+//    msgs = check(ast) + cyclicErrors(controlDeps(ast));
+//    if (msgs == {}) {
+//        rst = "\<script\><compile(desugar(ast))>\</script\>";
+//        rst += toHTML(viewQlForm);
+//       return textual("<rst>", messages = errors);
+//     }
+//     else{
+//     	errors = translateErrorMessages(msgs);
+//		return textual(result, messages = errors);
+//     }
+//}
+
 Completion complet(str prefix, int offset) {
-	proposerFunction = proposer(#Form);
+	proposerFunction = proposer(#CommandForm);
    	return < 0, ["<prop.newText>" | prop <- proposerFunction(prefix, offset)] >;
 }
 
@@ -85,7 +146,7 @@ void viewQlForm(){
 
 //------------------
 
-Model init() =astt;
+Model init() = astt;
 
 data Msg = ope();
 

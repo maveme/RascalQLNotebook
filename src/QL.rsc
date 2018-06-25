@@ -2,8 +2,8 @@ module QL
 
 extend Lexical;
 
-start syntax Form
-  = form: "form" Id name "{" Question* questions "}"
+syntax Form
+  = form: Id name "{" Question* questions "}"
   ;
 
 syntax Question
@@ -12,6 +12,7 @@ syntax Question
   | ifThen: "if" "(" Expr cond ")" Question body () !>> "else"
   | ifThenElse: "if" "(" Expr cond ")" Question body "else" Question elseBody
   | @Foldable group: "{" Question* questions "}"
+  | unles: "unless" "(" Expr cond ")" Question body ()
   ;
 
 syntax Expr
