@@ -20,6 +20,9 @@ list[Question] normalize(group(qs), Expr e)
   
 list[Question] normalize(ifThen(c, q), Expr e)
   = normalize(q, and(e, c));
+  
+list[Question] normalize(unless(c, q), Expr e)
+  = normalize(q, ifThen(not(e),c));
 
 list[Question] normalize(ifThenElse(c, q1, q2), Expr e)
   = normalize(q1, and(e, c))

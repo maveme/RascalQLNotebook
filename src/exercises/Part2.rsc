@@ -34,8 +34,22 @@ import Dependencies;
  * expressions (e.g.,  1 * x, 0 + x, true && x, false && x).
  */
 
+//Form desugar(Form f) {
+//int con =0;
+//  visit(f){
+//  	case label(str l): println(l);
+//  	case question(_,_,_): con+=1;
+//  };
+//  println("Number of questions: <con>");
+//}
+
 Form desugar(Form f) {
-  return f;
+int con =0;
+  visit(f){
+  	case unless(cond, body) => ifThen(cond, body)
+  	//case question(_,_,_): con+=1;
+  };
+ return f;
 }
 
 
@@ -66,8 +80,63 @@ Form desugar(Form f) {
  * alias Node = tuple[loc location, str label]; 
  * alias Deps = rel[Node from, Node to];
  */
- 
+
+set[Node] tmp() = { nodeFor(d.name) | /Id d := f};
+
+
+set[Node] tmp2(Form fff, str f) = { nodeFor(d.label.label) | /Question d := fff, d has label, d.label.label == f};
+
+
+Deps dataDepsZZ(Form f) {
+    
+	set[Node] definedIn(Node q)
+    = { nodeFor(d.name) | /Question  d := f, d has name, d.name.name == "<q.label>" };
+
+    Deps depsOf(Expr c) 
+    = {<d, u> | u <- usedIn(c), d <- definedIn(u) };
+    
+   set[Node] usedIn(Expr e) 
+    = { nodeFor(x) | /Id x := e };
+    
+    g={};
+	visit(f){
+		case computed(label, name, tipe, expr): 
+			g+= depsOf(expr);
+	};
+  return g;
+}
+
+//
+//set[Node] definedIn(Question q)
+//    = { nodeFor(d.name) | /Question d := q, d has name };
+//    
+//  // The set variable occurrences used in an Expr.
+//  set[Node] usedIn(Expr e) 
+//    = { nodeFor(x) | /Id x := e };
+//  
+//  // Edges between defined questions in the context of q
+//  // and the expression c.
+//  Deps depsOf(Expr c, Question q) 
+//    = {<d, u> | d <- definedIn(q), u <- usedIn(c) };
+//  
+//  g = {};
+//  visit (f) {
+//    case ifThen(c, q):
+//      g += depsOf(c, q);
+//    case IfThenElse(c, q1, q2):
+//      g += depsOf(c, q1) + depsOf(c, q2);
+//  }
+
 Deps dataDeps(Form f) {
+
+  // Edges between defined questions in the context of q
+  // and the expression c.
+ // Deps depsOf(Expr c, Question q) 
+ //   = {<d, u> | d <- definedIn(q), u <- usedIn(c) };
+ //   
+	//visit(f){
+	//	case computed(label, name, tipe, expr): s;
+	//};
   return {};
 }
 

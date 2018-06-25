@@ -30,6 +30,7 @@ set[Message] tc(question(l, n, _), Info i) = {};
 
 set[Message] tc(computed(l, n, _, e), Info i) = tc(e ,i);
 
+set[Message] tc(unlsess(c, q), Info i) = tci(c, i) + tc(q, i);
 
 default set[Message] tc(Question q, Info _) 
   = {error("Unrecognized question construct.", q@location)};
