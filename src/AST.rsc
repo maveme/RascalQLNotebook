@@ -1,5 +1,11 @@
 module AST
 
+data CommandForm 
+  = vari(Id name, Form form)
+  | visualize(Id i)
+  | tender(Id a)
+  ;				 	
+
 data Form
   = form(str name, list[Question] body);
   
@@ -7,6 +13,7 @@ data Question
   = question(Label label, Id name, QType tipe)
   | computed(Label label, Id name, QType tipe, Expr expr)
   | ifThen(Expr cond, Question body)
+  | unless(Expr cond, Question body)
   | ifThenElse(Expr cond, Question body, Question elseBody)
   | group(list[Question] questions)
   ;
