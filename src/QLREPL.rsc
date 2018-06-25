@@ -30,14 +30,6 @@ public REPL qlREPL(){
 
 map[str, AST::Form] history = ();
 
-//public REPL tmpREPL(){ 
-//       return repl(
-//	         	hand,
-//	         	complet
-//	         	visualization = makeSalixMultiplexer(|http://localhost:3434|, |tmp:///|)
-//         );
-//   }
-   
 Form astt = form("",[]);
 
 CommandResult handl(str line){
@@ -59,12 +51,10 @@ CommandResult handl(str line){
 			     }
 			}
 			case (CommandForm)`visualize(<Id idd>)`: {
-				//astt = implodeQL(pt);
 				astt = history["<idd>"];
 				return salix(makeApp(init, view, update));
 			}
 			case (CommandForm)`html(<Id idd>)`: {
-				//ast = implodeQL(pt);
 				try{
 					thisForm = history["<idd>"];
 					rst = "\<script\><compile(desugar(thisForm))>\</script\>";
@@ -75,17 +65,6 @@ CommandResult handl(str line){
 					errors = translateErrorMessages(msgs);
 					return textual(result, messages = errors);
 				}
-				//imploForm = implodeForm(thisForm);
-			 //   msgs = check(imploForm) + cyclicErrors(controlDeps(imploForm));
-			    //if (msgs == {}) {
-			       // rst = "\<script\><compile(desugar(thisForm))>\</script\>";
-			       // rst += toHTML(viewQlForm);
-			       //return textual("<rst>", messages = errors);
-			     //}
-			     //else{
-			     	//errors = translateErrorMessages(msgs);
-					//return textual(result, messages = errors);
-			     //}
 			}
 		}
 	}
@@ -94,46 +73,7 @@ CommandResult handl(str line){
 		errors = [error("Parse error at <lo>")];
 		return textual(result, messages = errors);
 	}
-
-
 }
-
-//CommandResult hand(str line){
-//	errors=[];
-//	try{ 
-//		pt = parse(#start[Form], line);
-//		astt = implodeQL(pt);
-//		return salix(makeApp(init, view, update));
-//	}
-//	catch ParseError(lo):
-//	{
-//		errors = [error("Parse error at <lo>")];
-//		return textual(result, messages = errors);
-//	}
-//}
-//
-//CommandResult handl(str line){
-//	errors=[];
-//	result = "";
-//	try 
-//		pt = parse(#start[Form], line);
-//	catch ParseError(lo):
-//	{
-//		errors = [error("Parse error at <lo>")];
-//		return textual(result, messages = errors);
-//	}
-//	ast = implodeQL(pt);
-//    msgs = check(ast) + cyclicErrors(controlDeps(ast));
-//    if (msgs == {}) {
-//        rst = "\<script\><compile(desugar(ast))>\</script\>";
-//        rst += toHTML(viewQlForm);
-//       return textual("<rst>", messages = errors);
-//     }
-//     else{
-//     	errors = translateErrorMessages(msgs);
-//		return textual(result, messages = errors);
-//     }
-//}
 
 Completion complet(str prefix, int offset) {
 	proposerFunction = proposer(#CommandForm);
@@ -143,8 +83,6 @@ Completion complet(str prefix, int offset) {
 void viewQlForm(){
 	div(id("QL-content"));
 }
-
-//------------------
 
 Model init() = astt;
 
