@@ -51,27 +51,31 @@ CommandResult handl(str line){
 			     }
 			}
 			case (CommandForm)`visualize(<Id idd>)`: {
-				astt = history["<idd>"];
+				astt = getForm("<idd>");
 				return salix(makeApp(init, view, update));
 			}
 			case (CommandForm)`html(<Id idd>)`: {
-				try{
-					thisForm = history["<idd>"];
-					rst = "\<script\><compile(desugar(thisForm))>\</script\>";
-			        rst += toHTML(viewQlForm);
-			       return textual("<rst>", messages = errors);
-				}
-				catch: {
-					errors = translateErrorMessages(msgs);
-					return textual(result, messages = errors);
-				}
+				thisForm = getForm("<idd>");
+				rst = "\<script\><compile(desugar(thisForm))>\</script\>";
+			    rst += toHTML(viewQlForm);
+				return textual("<rst>", messages = errors);
 			}
 		}
 	}
 	catch ParseError(lo):
 	{
 		errors = [error("Parse error at <lo>")];
-		return textual(result, messages = errors);
+		return textual("", messages = errors);
+	}
+}
+
+Form getForm(str idd){
+	try{
+		return history["<idd>"];
+	}
+	catch: {	
+		errors = translateErrorMessages(msgs);
+		return textual("", messages = errors);
 	}
 }
 
