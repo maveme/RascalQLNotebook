@@ -1,7 +1,7 @@
 $(document).ready(function () {
   var form = new QLrt.FormWidget({ name: "taxOfficeExample", submitCallback: persist});
   
-  var q$1 = new QLrt.ConditionalGroupWidget(new QLrt.LazyValue(
+  var q$0 = new QLrt.ConditionalGroupWidget(new QLrt.LazyValue(
     function () { return []; },
     function () { return true; }
   )).appendTo(form);
@@ -9,9 +9,9 @@ $(document).ready(function () {
     name: "hasBoughtHouse", 
     label: "Did you buy a house in 2010?",
     valueWidget: new QLrt.BooleanValueWidget() 
-  }).appendTo(q$1);
+  }).appendTo(q$0);
   
-  var q$3 = new QLrt.ConditionalGroupWidget(new QLrt.LazyValue(
+  var q$1 = new QLrt.ConditionalGroupWidget(new QLrt.LazyValue(
     function () { return []; },
     function () { return true; }
   )).appendTo(form);
@@ -19,9 +19,9 @@ $(document).ready(function () {
     name: "hasMaintLoan", 
     label: "Did you enter a loan?",
     valueWidget: new QLrt.BooleanValueWidget() 
-  }).appendTo(q$3);
+  }).appendTo(q$1);
   
-  var q$4 = new QLrt.ConditionalGroupWidget(new QLrt.LazyValue(
+  var q$2 = new QLrt.ConditionalGroupWidget(new QLrt.LazyValue(
     function () { return []; },
     function () { return true; }
   )).appendTo(form);
@@ -29,9 +29,9 @@ $(document).ready(function () {
     name: "hasSoldHouse", 
     label: "Did you sell a house in 2010?",
     valueWidget: new QLrt.BooleanValueWidget() 
-  }).appendTo(q$4);
+  }).appendTo(q$2);
   
-  var q$5 = new QLrt.ConditionalGroupWidget(new QLrt.LazyValue(
+  var q$3 = new QLrt.ConditionalGroupWidget(new QLrt.LazyValue(
     function () { return [hasSoldHouse]; },
     function (hasSoldHouse) { return (true && hasSoldHouse); }
   )).appendTo(form);
@@ -39,9 +39,9 @@ $(document).ready(function () {
     name: "sellingPrice", 
     label: "What was the selling price?",
     valueWidget: new QLrt.MoneyValueWidget() 
-  }).appendTo(q$5);
+  }).appendTo(q$3);
   
-  var q$6 = new QLrt.ConditionalGroupWidget(new QLrt.LazyValue(
+  var q$4 = new QLrt.ConditionalGroupWidget(new QLrt.LazyValue(
     function () { return [hasSoldHouse]; },
     function (hasSoldHouse) { return (true && hasSoldHouse); }
   )).appendTo(form);
@@ -49,9 +49,9 @@ $(document).ready(function () {
     name: "privateDebt", 
     label: "Private debts for the sold house:",
     valueWidget: new QLrt.MoneyValueWidget() 
-  }).appendTo(q$6);
+  }).appendTo(q$4);
   
-  var q$7 = new QLrt.ConditionalGroupWidget(new QLrt.LazyValue(
+  var q$5 = new QLrt.ConditionalGroupWidget(new QLrt.LazyValue(
     function () { return [hasSoldHouse]; },
     function (hasSoldHouse) { return (true && hasSoldHouse); }
   )).appendTo(form);
@@ -62,7 +62,7 @@ $(document).ready(function () {
     function () { return [sellingPrice, privateDebt]; },
     function (sellingPrice, privateDebt) { return (sellingPrice - privateDebt); }
   )) 
-  }).appendTo(q$7);
+  }).appendTo(q$5);
   
   $('#QL-content').append(form.domElement());
   form.activate();
